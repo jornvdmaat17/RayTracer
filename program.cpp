@@ -24,7 +24,7 @@ std::vector<Vec3Df> lighting;
 int SelectedLight=0;
 
 bool DiffuseLighting=true;
-bool PhongSpecularLighting=true;
+bool PhongSpecularLighting=false;
 bool BlinnPhongSpecularLighting=false;
 bool ToonLightingDiffuse=false;
 bool ToonLightingSpecular=false;
@@ -187,15 +187,6 @@ Vec3Df computeLighting(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, 
 	// 	{
 	// 		result+=blinnPhongSpecularOnly(vertexPos, normal, LightPos[light], CamPos, index);
 	// 	}
-	// if (ToonLightingDiffuse)
-	// 	{
-	// 		//overwrite previous stuff
-	// 		result=toonShadingNoSpecular(vertexPos, normal, LightPos[light], index);
-	// 	}
-	// if (ToonLightingSpecular&&!DiffuseLighting&&!PhongSpecularLighting&&!BlinnPhongSpecularLighting)
-	// {
-	// 	result+=toonShadingOnlySpecular(vertexPos, normal, LightPos[light], CamPos, index);
-	// }
 	return result;
 }
 
@@ -237,7 +228,7 @@ Vec3Df phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df
 void initStudentVariables()
 {
     Mesh MyMesh = meshes[0];
-	Kd.resize(MyMesh.vertices.size(), Vec3Df(0.5,0.5,0.5));
-	Ks.resize(MyMesh.vertices.size(), Vec3Df(0.5,0.5,0.5));
+	Kd.resize(MyMesh.vertices.size(), Vec3Df(0.2,0.2,0.2));
+	Ks.resize(MyMesh.vertices.size(), Vec3Df(0.2,0.2,0.2));
 	Shininess.resize(MyMesh.vertices.size(), 3);
 }

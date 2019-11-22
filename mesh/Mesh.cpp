@@ -7,7 +7,6 @@ Mesh::Mesh(const char* path, Vec3Df pos, int scale) : pos(pos), scale(scale){
     vertices.clear();
     triangles.clear();  
     loadOBJ(path, vertices, triangles);
-    computeVertexNormals();
 }
 
 void Mesh::draw(){

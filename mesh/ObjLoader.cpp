@@ -24,7 +24,6 @@ bool loadOBJ( const char *path, std::vector<Vertex> & out_vertices, std::vector<
             Vec3Df vertex;
             fscanf(file, "%f %f %f\n", &vertex.p[0], &vertex.p[1], &vertex.p[2]);
             temp_vertices.push_back(vertex);
-            out_vertices.push_back(Vertex(vertex));
         }else if(strcmp(lineHeader, "vn") == 0){
             Vec3Df normal;
             fscanf(file, "%f %f %f\n", &normal.p[0], &normal.p[1], &normal.p[2]);
@@ -57,10 +56,10 @@ bool loadOBJ( const char *path, std::vector<Vertex> & out_vertices, std::vector<
 
     */
     
-    // for(unsigned int i = 0; i < temp_vertices.size(); i++){ 
-    //     Vertex v = Vertex()
-    //     out_vertices.push_back(v);
-    // }
+    for(unsigned int i = 0; i < temp_vertices.size(); i++){ 
+        Vertex v = Vertex(temp_vertices[i], temp_normals[normalIndices[i] - 1]);
+        out_vertices.push_back(v);
+    }
 
     for(unsigned int i = 0; i < vertexIndices.size(); i += 3)
         out_triangles.push_back(Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1));
