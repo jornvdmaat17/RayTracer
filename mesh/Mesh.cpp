@@ -7,6 +7,10 @@ Mesh::Mesh(const char* path, Vec3Df pos, int scale) : pos(pos), scale(scale){
     vertices.clear();
     triangles.clear();  
     loadOBJ(path, vertices, triangles);
+    Kd.resize(vertices.size(), Vec3Df(0.5,0.5,0.5));
+	Ks.resize(vertices.size(), Vec3Df(0.2,0.2,0.2));
+	Shininess.resize(vertices.size(), 3);
+    lighting.resize(vertices.size());
 }
 
 void Mesh::draw(){
@@ -50,8 +54,6 @@ void Mesh::drawWithColors(const std::vector<Vec3Df> & colors){
     glEnd();
 }
 
-Rectangle::Rectangle(Vec3Df pos, float scale) : Mesh("data/rectangle.obj", pos, scale) {}
-
 Cube::Cube(Vec3Df pos, float scale) : Mesh("data/cube.obj", pos, scale) {}
 
 Sphere::Sphere(Vec3Df pos, float scale) : Mesh("data/sphere.obj", pos, scale){}
@@ -87,4 +89,78 @@ void Mesh::computeVertexNormals() {
     //Normalization
     for (unsigned int i = 0; i < vertices.size (); i++)
         vertices[i].n.normalize();
+}
+
+void Mesh::computeLighting(std::vector<Vec3Df> LightPos, Vec3Df CamPos){
+    std::vector<Vec3Df> *result = &lighting;
+    for (unsigned int i=0; i < vertices.size();++i)
+	{
+		(*result)[i] = Vec3Df();
+		for (unsigned int l=0; l< LightPos.size();++l){
+			(*result)[i] += computeLightingPerVector(vertices[i].p, vertices[i].n, l, i, LightPos, CamPos);
+        }
+    }
+}
+
+Vec3Df Mesh::computeLightingPerVector(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index, std::vector<Vec3Df> LightPos, Vec3Df CamPos){
+	Vec3Df result(0,0,0);
+	if (DiffuseLighting){
+        result+=diffuseOnly(vertexPos, normal, LightPos[light], index);
+	}
+	if (PhongSpecularLighting){
+        result+=phongSpecularOnly(vertexPos, normal, LightPos[light], CamPos, index);
+    }
+	else if (BlinnPhongSpecularLighting){
+        result+=blinnPhongSpecularOnly(vertexPos, normal, LightPos[light], CamPos, index);
+    }
+	return result;
+}
+
+void Mesh::drawWithLight(){
+    drawWithColors(lighting);
+}
+
+Vec3Df Mesh::diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, unsigned int index)
+{	
+	normal.normalize();
+	Vec3Df dis = lightPos - vertexPos;
+	dis.normalize();
+	float t =  Vec3Df::dotProduct(normal, dis);
+    std::cout << t << std::endl;
+	if (t < 0) {
+		t = 0;
+	}
+	Vec3Df res = (t*Kd[index]);
+	return res;
+}
+
+Vec3Df Mesh::phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index)
+{
+	Vec3Df viewDir = cameraPos- vertexPos;
+	viewDir.normalize();
+	normal.normalize();
+	Vec3Df lightP = lightPos;
+	lightP.normalize();
+	Vec3Df reflectDir = 2 * Vec3Df::dotProduct(lightP, normal) * normal - lightP;
+
+	float t = pow(Vec3Df::dotProduct(viewDir, reflectDir), Shininess[index]);
+	if (t < 0) t = 0;
+	Vec3Df res =(t * Ks[index]);
+	return res;
+}
+
+Vec3Df Mesh::blinnPhongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index)
+{
+	normal.normalize();
+	Vec3Df lightDir = lightPos - vertexPos;
+	lightDir.normalize();
+	Vec3Df viewDir = cameraPos - vertexPos;
+	viewDir.normalize();
+	Vec3Df halfDir = lightDir + viewDir;
+	halfDir.normalize();
+
+	float t = pow(Vec3Df::dotProduct(normal, halfDir), Shininess[index]);
+	if (t < 0) t = 0;
+	Vec3Df res = ( t * Ks[index]);
+	return res;
 }

@@ -2,7 +2,7 @@
 #include <cstring>
 #include "../math/Vertex.h"
 
-bool loadOBJ( const char *path, std::vector<Vertex> & out_vertices, std::vector<Triangle> & out_triangles){
+bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<Triangle> & out_triangles){
 
     std::vector<unsigned int> vertexIndices, normalIndices;
     std::vector<Vec3Df> temp_vertices, temp_normals;
@@ -29,7 +29,6 @@ bool loadOBJ( const char *path, std::vector<Vertex> & out_vertices, std::vector<
             fscanf(file, "%f %f %f\n", &normal.p[0], &normal.p[1], &normal.p[2]);
             temp_normals.push_back(normal);
         }else if(strcmp(lineHeader, "f") == 0){
-            std::string vertex1, vertex2, vertex3;
             unsigned int vertexIndex[3], normalIndex[3], uvIndex[3];
             int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", 
             &vertexIndex[0], &uvIndex[0], &normalIndex[0],
@@ -48,13 +47,6 @@ bool loadOBJ( const char *path, std::vector<Vertex> & out_vertices, std::vector<
         }
 
     }
-
-    // 1 1 1 --- 3 3 1
-    /*
-
-        
-
-    */
     
     for(unsigned int i = 0; i < temp_vertices.size(); i++){ 
         Vertex v = Vertex(temp_vertices[i], temp_normals[normalIndices[i] - 1]);
