@@ -20,26 +20,17 @@ Vec3Df CamPos = Vec3Df(0.0f,0.0f,-4.0f);
 
 std::vector<Vec3Df> LightPos;
 std::vector<Vec3Df> LightColor;
-std::vector<Vec3Df> lighting;
 int SelectedLight=0;
 
 bool DiffuseLighting=true;
-bool PhongSpecularLighting=true;
+bool PhongSpecularLighting=false;
 bool BlinnPhongSpecularLighting=false;
 bool ToonLightingDiffuse=false;
 bool ToonLightingSpecular=false;
 
-std::vector<Vec3Df> Kd;//diffuse coefficient per vertex
-std::vector<Vec3Df> Ks;//specularity coefficient per vertex
-std::vector<float> Shininess;//exponent for phong and blinn-phong specularities
-int ToonDiscretize=4;//number of levels in toon shading
 float ToonSpecularThreshold=0.49;//threshold for specularity
 
-Vec3Df diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, unsigned int index);
-void computeLighting();
-Vec3Df computeLighting(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index);
-Vec3Df phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index);
-
+void computeLightingForMeshes();
 
 int main(int argc, char** argv){
 
@@ -122,7 +113,7 @@ void draw(void){
 	glEnd();
 
     for(int i = 0; i < meshes.size(); i++){
-        meshes[i].drawWithColors(lighting);
+        meshes[i].drawWithLight();
     }
 }
 
@@ -130,22 +121,18 @@ void init(){
     
     Cube c = Cube(Vec3Df(0,0,0), 1);
     meshes.push_back(c);
-
-    std::cout << c.vertices[0].n[2] << std::endl;
-
-    lighting.resize(meshes[0].vertices.size());
-    initStudentVariables();
-    
-    LightPos.push_back(Vec3Df(0,0,3));
+	
+    LightPos.push_back(Vec3Df(0,1,1));
 	LightColor.push_back(Vec3Df(1,1,1));
-	computeLighting();
+	
+	computeLightingForMeshes();
 }
 
 void idle()
 {
 	CamPos=getCameraPosition();
 
-	computeLighting();
+	computeLightingForMeshes();
 
 	glutPostRedisplay();
 }
@@ -158,86 +145,8 @@ void reshape(int w, int h){
     glMatrixMode(GL_MODELVIEW);
 }
 
-void computeLighting()
-{
-	std::vector<Vec3Df> *result = &lighting;
-
-    // ONLY FOR 1 MESH
-    Mesh MyMesh = meshes[0];
-	for (unsigned int i=0; i < MyMesh.vertices.size();++i)
-	{
-		(*result)[i] = Vec3Df();
-		for (unsigned int l=0; l<LightPos.size();++l)
-			(*result)[i] += computeLighting(MyMesh.vertices[i].p, MyMesh.vertices[i].n, l, i);
+void computeLightingForMeshes(){
+	for(int i = 0; i < meshes.size(); i++){
+		meshes[i].computeLighting(LightPos, CamPos);
 	}
-}
-
-Vec3Df computeLighting(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index)
-{
-	Vec3Df result(0,0,0);
-	if (DiffuseLighting)
-		{
-			result+=diffuseOnly(vertexPos, normal, LightPos[light], index);
-		}
-	if (PhongSpecularLighting)
-		{
-			result+=phongSpecularOnly(vertexPos, normal, LightPos[light], CamPos, index);
-		}
-	// else if (BlinnPhongSpecularLighting)
-	// 	{
-	// 		result+=blinnPhongSpecularOnly(vertexPos, normal, LightPos[light], CamPos, index);
-	// 	}
-	// if (ToonLightingDiffuse)
-	// 	{
-	// 		//overwrite previous stuff
-	// 		result=toonShadingNoSpecular(vertexPos, normal, LightPos[light], index);
-	// 	}
-	// if (ToonLightingSpecular&&!DiffuseLighting&&!PhongSpecularLighting&&!BlinnPhongSpecularLighting)
-	// {
-	// 	result+=toonShadingOnlySpecular(vertexPos, normal, LightPos[light], CamPos, index);
-	// }
-	return result;
-}
-
-
-
-// NEEDS TO MOVE
-
-Vec3Df diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, unsigned int index)
-{	
-	normal.normalize();
-	Vec3Df dis = lightPos - vertexPos;
-	dis.normalize();
-	float t =  Vec3Df::dotProduct(normal,   dis);
-	if (t < 0) {
-		t = 0;
-	}
-	Vec3Df res = (t*Kd[index]);
-	return res;
-}
-
-Vec3Df phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index)
-{
-	Vec3Df viewDir = cameraPos- vertexPos;
-	viewDir.normalize();
-	normal.normalize();
-	Vec3Df lightP = lightPos;
-	lightP.normalize();
-	Vec3Df reflectDir = 2 * Vec3Df::dotProduct(lightP, normal) * normal - lightP;
-
-	float t = pow(Vec3Df::dotProduct(viewDir, reflectDir), Shininess[index]);
-	if (t < 0) t = 0;
-	Vec3Df res =(t * Ks[index]);
-	return res;
-}
-
-
-
-//Helper function that you can ignore!
-void initStudentVariables()
-{
-    Mesh MyMesh = meshes[0];
-	Kd.resize(MyMesh.vertices.size(), Vec3Df(0.5,0.5,0.5));
-	Ks.resize(MyMesh.vertices.size(), Vec3Df(0.5,0.5,0.5));
-	Shininess.resize(MyMesh.vertices.size(), 3);
 }
