@@ -2,41 +2,25 @@
 #include "mesh/Mesh.h"
 #include <vector>
 #include "input/Mouse.h"
+#include "render/Renderer.h"
 
 #define WIDTH 800
 #define HEIGHT 800
 
+Renderer renderer;
+
 const float BackgroundColor[]={0.2,0.2,0};
 void display();
-void draw();
 void init();
 void reshape(int w, int h);
 void idle();
-void initStudentVariables();
 
-std::vector<Mesh> meshes;
-
-Vec3Df CamPos = Vec3Df(0.0f,0.0f,-4.0f);
-
-std::vector<Vec3Df> LightPos;
-std::vector<Vec3Df> LightColor;
-int SelectedLight=0;
-
-bool DiffuseLighting=true;
-bool PhongSpecularLighting=false;
-bool BlinnPhongSpecularLighting=false;
-bool ToonLightingDiffuse=false;
-bool ToonLightingSpecular=false;
-
-float ToonSpecularThreshold=0.49;//threshold for specularity
-
-void computeLightingForMeshes();
+void keyboard(unsigned char key, int x, int y);
 
 int main(int argc, char** argv){
 
     glutInit(&argc, argv);
 
-    // TODO
     init();
 
     // Framebuffer options/layers used by the application
@@ -61,7 +45,7 @@ int main(int argc, char** argv){
     // Callback assignment
     // TODO
     glutReshapeFunc(reshape);
-    // glutKeyboardFunc(keyboard);
+    glutKeyboardFunc(keyboard);
     glutDisplayFunc(display);
     glutMouseFunc(tbMouseFunc);    // Set mouse click callback
     glutMotionFunc(tbMotionFunc);  // Set mouse move callback
@@ -80,6 +64,19 @@ int main(int argc, char** argv){
     return 0;
 }
 
+void init(){
+
+    renderer = Renderer();
+    
+    Mesh m = Sphere(Vec3Df(0,10,0), 1);
+	Mesh c = Cube(Vec3Df(0,-1,0) , 1);
+	
+    renderer.addMesh(m);
+    renderer.addMesh(c);
+
+    renderer.computeLighting();
+}
+
 void display(void){
 
     glClear( GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT); 
@@ -88,53 +85,14 @@ void display(void){
 	glLoadIdentity();  // Set identity matrix as initial transformation matrix
     tbVisuTransform(); // Set transform according to camera position (as set by mouse movement)
 
-    draw();    
+    renderer.render();   
 
     glutSwapBuffers();
 }
 
-void draw(void){
 
-    glPointSize(10);
-	glBegin(GL_POINTS);
-	//LightColor
-	glColor3f(1,0,0);	
-	
-	for (unsigned int i=0; i<LightPos.size();++i)	
-	{	
-		glVertex3f(LightPos[i][0],LightPos[i][1],LightPos[i][2]);
-	}
-	glEnd();
-	
-	glPointSize(40);
-	glColor3f(1,1,0);	
-	glBegin(GL_POINTS);
-	glVertex3f(LightPos[SelectedLight][0],LightPos[SelectedLight][1],LightPos[SelectedLight][2]);
-	glEnd();
-
-    for(int i = 0; i < meshes.size(); i++){
-        meshes[i].drawWithLight();
-    }
-}
-
-void init(){
-    
-    Cube c = Cube(Vec3Df(0,0,0), 1);
-    meshes.push_back(c);
-	
-    LightPos.push_back(Vec3Df(0,1,1));
-	LightColor.push_back(Vec3Df(1,1,1));
-	
-	computeLightingForMeshes();
-}
-
-void idle()
-{
-	CamPos=getCameraPosition();
-
-	computeLightingForMeshes();
-
-	glutPostRedisplay();
+void idle(){
+	renderer.idle();
 }
 
 void reshape(int w, int h){
@@ -145,8 +103,28 @@ void reshape(int w, int h){
     glMatrixMode(GL_MODELVIEW);
 }
 
-void computeLightingForMeshes(){
-	for(int i = 0; i < meshes.size(); i++){
-		meshes[i].computeLighting(LightPos, CamPos);
-	}
+
+void keyboard(unsigned char key, int x, int y){
+    switch(key){
+        case 'l': {
+            renderer.replaceLight(Vec3Df(1,1,1));
+            return;
+        }
+        case 'L': {
+            renderer.addLightAtCamPos(Vec3Df(1,1,1));            
+            return;
+        }
+        case 'r': {
+            renderer.resetLights();
+			return;
+        }
+        case '=': {
+            changeZoom(0.5f);
+            return;
+        }
+        case '-': {
+            changeZoom(-0.5f);
+            return;
+        }
+    }
 }

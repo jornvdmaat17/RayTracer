@@ -11,6 +11,8 @@ Mesh::Mesh(const char* path, Vec3Df pos, int scale) : pos(pos), scale(scale){
 	Ks.resize(vertices.size(), Vec3Df(0.2,0.2,0.2));
 	Shininess.resize(vertices.size(), 3);
     lighting.resize(vertices.size());
+    computeVertexNormals();
+    centerAndScaleToUnit();
 }
 
 void Mesh::draw(){
@@ -75,12 +77,13 @@ void Mesh::computeVertexNormals() {
     for (unsigned int i = 0; i < vertices.size (); i++)
         vertices[i].n = Vec3Df (0.0, 0.0, 0.0);
     
-
     // Sum of  vertex neighbourhood normals
     for (unsigned int i = 0; i < triangles.size(); i++) {
         Vec3Df edge01 = vertices[triangles[i].v1].p -  vertices[triangles[i].v0].p;
         Vec3Df edge02 = vertices[triangles[i].v2].p -  vertices[triangles[i].v0].p;
-        Vec3Df n = Vec3Df::crossProduct (edge01, edge02);
+        triangles[i].edge0 = edge01;
+        triangles[i].edge1 = edge02;
+        Vec3Df n = Vec3Df::crossProduct(edge01, edge02);
         n.normalize ();
         vertices[triangles[i].v0].n += n;
         vertices[triangles[i].v1].n += n;
@@ -91,10 +94,9 @@ void Mesh::computeVertexNormals() {
         vertices[i].n.normalize();
 }
 
-void Mesh::computeLighting(std::vector<Vec3Df> LightPos, Vec3Df CamPos){
+void Mesh::computeLighting(std::vector<Vec3Df> & LightPos, Vec3Df & CamPos){
     std::vector<Vec3Df> *result = &lighting;
-    for (unsigned int i=0; i < vertices.size();++i)
-	{
+    for (unsigned int i=0; i < vertices.size();++i){
 		(*result)[i] = Vec3Df();
 		for (unsigned int l=0; l< LightPos.size();++l){
 			(*result)[i] += computeLightingPerVector(vertices[i].p, vertices[i].n, l, i, LightPos, CamPos);
@@ -102,7 +104,7 @@ void Mesh::computeLighting(std::vector<Vec3Df> LightPos, Vec3Df CamPos){
     }
 }
 
-Vec3Df Mesh::computeLightingPerVector(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index, std::vector<Vec3Df> LightPos, Vec3Df CamPos){
+Vec3Df Mesh::computeLightingPerVector(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index, std::vector<Vec3Df> & LightPos, Vec3Df & CamPos){
 	Vec3Df result(0,0,0);
 	if (DiffuseLighting){
         result+=diffuseOnly(vertexPos, normal, LightPos[light], index);
@@ -126,7 +128,6 @@ Vec3Df Mesh::diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df
 	Vec3Df dis = lightPos - vertexPos;
 	dis.normalize();
 	float t =  Vec3Df::dotProduct(normal, dis);
-    std::cout << t << std::endl;
 	if (t < 0) {
 		t = 0;
 	}
@@ -164,3 +165,18 @@ Vec3Df Mesh::blinnPhongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, c
 	Vec3Df res = ( t * Ks[index]);
 	return res;
 }
+
+void Mesh::centerAndScaleToUnit() {
+    Vec3Df c;
+    for  (unsigned int i = 0; i < vertices.size (); i++)
+        c += vertices[i].p;
+    c /= vertices.size();
+    float maxD = Vec3Df::distance(vertices[0].p, c);
+    for (unsigned int i = 0; i < vertices.size(); i++){
+        float m = Vec3Df::distance (vertices[i].p, c);
+        if (m > maxD)
+            maxD = m;
+    }
+    for  (unsigned int i = 0; i < vertices.size (); i++)
+        vertices[i].p = (vertices[i].p - c + pos) / maxD;
+}	

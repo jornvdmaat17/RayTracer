@@ -22,9 +22,7 @@ class Mesh {
 
         bool DiffuseLighting = true;
         bool PhongSpecularLighting = false;
-        bool BlinnPhongSpecularLighting = false;
-
-        void computeVertexNormals();
+        bool BlinnPhongSpecularLighting = true;
 
         void drawWithLight();
         void drawWithColors(const std::vector<Vec3Df> & colors);
@@ -33,10 +31,12 @@ class Mesh {
         void printVertices();
         void printTriangles();  
 
-        void computeLighting(std::vector<Vec3Df> LightPos, Vec3Df CamPos ); 
+        void computeLighting(std::vector<Vec3Df> & LightPos, Vec3Df & CamPos); 
 
     private:
-        Vec3Df computeLightingPerVector(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index, std::vector<Vec3Df> LightPos, Vec3Df CamPos);
+        void computeVertexNormals();
+        void centerAndScaleToUnit();
+        Vec3Df computeLightingPerVector(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index, std::vector<Vec3Df> & LightPos, Vec3Df & CamPos);
         Vec3Df diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, unsigned int index);
         Vec3Df phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index);
         Vec3Df blinnPhongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index);

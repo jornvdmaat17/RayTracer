@@ -12,6 +12,7 @@ void tbMotionFunc(int x, int y);
 void tbRotate(double angle, double x, double y, double z);
 void tbProject( const GLdouble *m, const GLdouble* p, GLdouble* q);
 void tbProject( const GLdouble* p, GLfloat* q);
+void changeZoom(float amount);
 Vec3Df getCameraPosition();
 Vec3Df getWorldPositionOfPixel(unsigned int px, unsigned int py);
 

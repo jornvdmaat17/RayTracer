@@ -209,3 +209,9 @@ Vec3Df getWorldPositionOfPixel(unsigned int px, unsigned int py){
 	gluUnProject(double(px),double(py),0,mv,pr,vp,&x,&y,&z);
 	return Vec3Df(x,y,z);
 }
+
+void changeZoom(float amount) {
+	tb_matrix[14] += amount * speedfact;
+	inverse(tb_matrix, tb_inverse);
+	glutPostRedisplay();
+}

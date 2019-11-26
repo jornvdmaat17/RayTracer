@@ -13,6 +13,9 @@ class Triangle {
         int v0;
         int v1;
         int v2;
+
+        Vec3Df edge0;
+        Vec3Df edge1;
         ~Triangle();
 };
 
