@@ -2,21 +2,22 @@
 #include "Image.h"
 #include <algorithm>
 #include <stdlib.h>
+#include <iostream>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
 RGB::RGB(float r, float g, float b){
-    r = std::min(r, 1.0f);
-    g = std::min(g, 1.0f);
-    b = std::min(b, 1.0f);
+    this->r = std::min(r, 1.0f);
+    this->g = std::min(g, 1.0f);
+    this->b = std::min(b, 1.0f);
 }
 
 Image::Image(int width, int height) : width(width), height(height){
     image.resize(3*width*height);
 }
 
-void Image::setPixel(int i, int j, const RGB & rgb){
+void Image::setPixel(int i, int j, RGB rgb){
     image[3 * (width * j + i)] = rgb.r;
     image[3 * (width * j + i) + 1] = rgb.g;
     image[3 * (width * j + i) + 2] = rgb.b;

@@ -3,6 +3,9 @@
 #include <vector>
 #include "input/Mouse.h"
 #include "render/Renderer.h"
+#include "render/Image.h"
+#include "math/Vec3D.h"
+#include "render/RayTracer.h"
 
 #define WIDTH 800
 #define HEIGHT 800
@@ -68,11 +71,11 @@ void init(){
 
     renderer = Renderer();
     
-    Mesh m = Sphere(Vec3Df(0,10,0), 1);
-	Mesh c = Cube(Vec3Df(0,-1,0) , 1);
-	
+    Mesh m = Sphere(Vec3Df(0,0,0), 1);
     renderer.addMesh(m);
-    renderer.addMesh(c);
+    // renderer.addMesh(Cube(Vec3Df(0,-1,0) , 1));
+
+    renderer.addString(ASCIIString(-1.4, 1.4, 1, 1, 1, "Raytracing Program"));
 
     renderer.computeLighting();
 }
@@ -92,14 +95,14 @@ void display(void){
 
 
 void idle(){
-	renderer.idle();
+	renderer.idle();    
 }
 
 void reshape(int w, int h){
     glViewport(0, 0, (GLsizei) w, (GLsizei) h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective (40, (float) w / h, 1, 10);
+    gluPerspective (40, (float) w / h, 1, 100);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -124,6 +127,19 @@ void keyboard(unsigned char key, int x, int y){
         }
         case '-': {
             changeZoom(-0.5f);
+            return;
+        }
+        case 's': {
+            Image result(WIDTH, HEIGHT);
+            std::vector<Mesh> meshes = renderer.meshes;
+            std::vector<Vec3Df> lights = renderer.lights;
+            RayTracer rayTracer = RayTracer(WIDTH, HEIGHT, meshes);
+            rayTracer.startRayTracing();
+            rayTracer.writeToImage(result);
+            result.writeImage("result.bmp");
+
+
+
             return;
         }
     }

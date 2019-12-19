@@ -29,7 +29,8 @@ class Mesh {
         void draw();
 
         void printVertices();
-        void printTriangles();  
+        void printTriangles(); 
+        void printTriangleEdges(); 
 
         void computeLighting(std::vector<Vec3Df> & LightPos, Vec3Df & CamPos); 
 

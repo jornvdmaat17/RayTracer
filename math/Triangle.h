@@ -2,6 +2,7 @@
 #define _triangle_h_
 
 #include <string>
+#include "Vec3D.h"
 
 class Triangle {
     
@@ -14,6 +15,7 @@ class Triangle {
         int v1;
         int v2;
 
+        void setEdges(Vec3Df edge0, Vec3Df edge1);
         Vec3Df edge0;
         Vec3Df edge1;
         ~Triangle();

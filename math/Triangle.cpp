@@ -17,6 +17,11 @@ Triangle::Triangle (int v0, int v1, int v2) {
     this->v2 = v2;
 }
 
+void Triangle::setEdges(Vec3Df edge0, Vec3Df edge1){
+    this->edge0 = edge0;
+    this->edge1 = edge1;
+}
+
 const std::string Triangle::toString(){
     return "Triangle(" + std::to_string(v0) + std::string(", ") + std::to_string(v1) + std::string(", ") + std::to_string(v2) + std::string(")");
 }

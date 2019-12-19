@@ -53,8 +53,10 @@ bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<T
         out_vertices.push_back(v);
     }
 
-    for(unsigned int i = 0; i < vertexIndices.size(); i += 3)
-        out_triangles.push_back(Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1));
+    for(unsigned int i = 0; i < vertexIndices.size(); i += 3){
+        Triangle t = Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1);
+        out_triangles.push_back(t);
+    }
     
     return true;
 }

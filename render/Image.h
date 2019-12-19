@@ -18,7 +18,7 @@ class Image {
         int width, height;
         std::vector<float> image;
         Image(int width, int height);
-        void setPixel(int i, int j, const RGB & rgb);
+        void setPixel(int i, int j, RGB rgb);
         bool writeImage(const char * fileName);
 };
 

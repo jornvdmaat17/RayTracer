@@ -26,7 +26,6 @@ void Mesh::draw(){
         glVertex3f(vertices[triangles[i].v2].p[0], vertices[triangles[i].v2].p[1] ,vertices[triangles[i].v2].p[2]);
     }
 
-
     glEnd();
 }
 
@@ -39,17 +38,17 @@ void Mesh::drawWithColors(const std::vector<Vec3Df> & colors){
         
         const Vec3Df & color0 = colors[triangles[i].v0];
         glColor3f(color0[0], color0[1], color0[2]);
-        glNormal3f(vertices[triangles[i].v0].n[0], vertices[triangles[i].v0].n[1], vertices[triangles[i].v0].n[2]);
+        // glNormal3f(vertices[triangles[i].v0].n[0], vertices[triangles[i].v0].n[1], vertices[triangles[i].v0].n[2]);
         glVertex3f(vertices[triangles[i].v0].p[0], vertices[triangles[i].v0].p[1], vertices[triangles[i].v0].p[2]);
         
         const Vec3Df & color1 = colors[triangles[i].v1];
         glColor3f(color1[0], color1[1], color1[2]);
-        glNormal3f(vertices[triangles[i].v1].n[0], vertices[triangles[i].v1].n[1], vertices[triangles[i].v1].n[2]);
+        // glNormal3f(vertices[triangles[i].v1].n[0], vertices[triangles[i].v1].n[1], vertices[triangles[i].v1].n[2]);
         glVertex3f(vertices[triangles[i].v1].p[0], vertices[triangles[i].v1].p[1], vertices[triangles[i].v1].p[2]);
 
         const Vec3Df & color2 = colors[triangles[i].v2];
         glColor3f(color2[0], color2[1], color2[2]);
-        glNormal3f(vertices[triangles[i].v2].n[0], vertices[triangles[i].v2].n[1], vertices[triangles[i].v2].n[2]);
+        // glNormal3f(vertices[triangles[i].v2].n[0], vertices[triangles[i].v2].n[1], vertices[triangles[i].v2].n[2]);
         glVertex3f(vertices[triangles[i].v2].p[0], vertices[triangles[i].v2].p[1], vertices[triangles[i].v2].p[2]);
 
     }
@@ -72,6 +71,12 @@ void Mesh::printTriangles(){
     }
 }
 
+void Mesh::printTriangleEdges(){
+    for(unsigned int i = 0; i < triangles.size(); i++){
+        std::cout << triangles[i].edge0 << " " << triangles[i].edge1 << std::endl;
+    }
+}
+
 void Mesh::computeVertexNormals() {
     // Vertex normals initialization
     for (unsigned int i = 0; i < vertices.size (); i++)
@@ -81,10 +86,8 @@ void Mesh::computeVertexNormals() {
     for (unsigned int i = 0; i < triangles.size(); i++) {
         Vec3Df edge01 = vertices[triangles[i].v1].p -  vertices[triangles[i].v0].p;
         Vec3Df edge02 = vertices[triangles[i].v2].p -  vertices[triangles[i].v0].p;
-        triangles[i].edge0 = edge01;
-        triangles[i].edge1 = edge02;
-        Vec3Df n = Vec3Df::crossProduct(edge01, edge02);
-        n.normalize ();
+        triangles[i].setEdges(edge01, edge02);
+        Vec3Df n = Vec3Df::crossProduct(triangles[i].edge0, triangles[i].edge1);
         vertices[triangles[i].v0].n += n;
         vertices[triangles[i].v1].n += n;
         vertices[triangles[i].v2].n += n;

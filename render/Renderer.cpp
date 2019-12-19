@@ -1,19 +1,16 @@
 
 #include "Renderer.h"
 #include "../input/Mouse.h"
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 
 const Vec3Df initialLight = Vec3Df(4,0,-4);
 const Vec3Df initialLightColor = Vec3Df(1,1,1);
 
 Renderer::Renderer(){
+    meshes.clear();
     camPos = getCameraPosition();
     lightIndex = 0;
     resetLights();
-}
-
-void Renderer::addMesh(Mesh mesh){
-    meshes.push_back(mesh);
 }
 
 void Renderer::replaceLight(Vec3Df lightColor){
@@ -39,6 +36,10 @@ void Renderer::resetLights(){
     lightIndex = 0;
 }
 
+void Renderer::addMesh(Mesh mesh){
+    meshes.push_back(mesh);
+}
+
 void Renderer::render(){
     //First render the lights
     glPointSize(40);
@@ -53,6 +54,9 @@ void Renderer::render(){
     for(int i = 0; i < meshes.size(); i++){
         meshes[i].drawWithLight();
     }
+    for(int i = 0; i < strings.size(); i++){
+        renderStrings();
+    }
 }
 
 void Renderer::idle(){
@@ -65,4 +69,18 @@ void Renderer::computeLighting(){
     for(int i = 0; i < meshes.size(); i++){
 		meshes[i].computeLighting(lights, camPos);
 	}
+}
+
+void Renderer::addString(ASCIIString s){
+    strings.push_back(s);
+}
+
+void Renderer::renderStrings(){  
+    for(int i = 0; i < strings.size(); i++){
+        const unsigned char* t = reinterpret_cast<const unsigned char *>(strings[i].text);
+        glColor3f(strings[i].r, strings[i].g, strings[i].b); 
+        glRasterPos2f(strings[i].x, strings[i].y);
+
+        glutBitmapString(GLUT_BITMAP_HELVETICA_18, t);
+    }
 }

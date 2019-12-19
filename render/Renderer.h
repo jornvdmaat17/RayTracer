@@ -3,28 +3,33 @@
 
 #include <vector>
 #include "../mesh/Mesh.h"
+#include "ASCII.h"
 
 class Renderer {
 
     private:
-        std::vector<Mesh> meshes;
-        std::vector<Vec3Df> lights;
         std::vector<Vec3Df> lightsColor;
-        Vec3Df camPos;
         unsigned int lightIndex;
         
 
     public:
-        void computeLighting();
+        std::vector<Mesh> meshes;
+        Vec3Df camPos;
+        std::vector<Vec3Df> lights;
+        std::vector<ASCIIString> strings;
         Renderer();
-        void addMesh(Mesh mesh);
+        void computeLighting();
         void addLight(Vec3Df light, Vec3Df lightColor);
+        void addMesh(Mesh mesh);
         void replaceLight(Vec3Df lightColor);
         void addLightAtCamPos(Vec3Df lightColor);
         void resetLights();
 
         void render();
         void idle();
+
+        void addString(ASCIIString s);
+        void renderStrings();
 };
 
 
