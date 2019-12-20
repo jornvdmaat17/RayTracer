@@ -6,6 +6,7 @@
 #include "render/Image.h"
 #include "math/Vec3D.h"
 #include "render/RayTracer.h"
+#include "input/SceneBuilder.h"
 
 #define WIDTH 800
 #define HEIGHT 800
@@ -71,9 +72,10 @@ void init(){
 
     renderer = Renderer();
     
-    Mesh m = Sphere(Vec3Df(0,0,0), 1);
-    renderer.addMesh(m);
-    // renderer.addMesh(Cube(Vec3Df(0,-1,0) , 1));
+    std::vector<Mesh> meshes = getMeshInformation("data/scene.txt");
+    for(int i = 0; i < meshes.size(); i++){
+        renderer.addMesh(meshes[i]);
+    }
 
     renderer.addString(ASCIIString(-1.4, 1.4, 1, 1, 1, "Raytracing Program"));
 
