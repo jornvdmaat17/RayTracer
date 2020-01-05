@@ -19,6 +19,7 @@ class Mesh {
 
         std::vector<Vertex> vertices;
         std::vector<Triangle> triangles;
+        std::vector<Vec3Df> normals;
 
         bool DiffuseLighting = true;
         bool PhongSpecularLighting = false;
@@ -31,6 +32,8 @@ class Mesh {
         void printVertices();
         void printTriangles(); 
         void printTriangleEdges(); 
+
+        Vec3Df & normalAt(const int t, const int i);
 
         void computeLighting(std::vector<Vec3Df> & LightPos, Vec3Df & CamPos); 
 

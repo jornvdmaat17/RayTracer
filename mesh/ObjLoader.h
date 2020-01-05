@@ -9,7 +9,8 @@ class Vertex;
 bool loadOBJ(
     const char *path,
     std::vector<Vertex> & out_vertices,
-    std::vector<Triangle> & out_triangles
+    std::vector<Triangle> & out_triangles,
+    std::vector<Vec3Df> & normals
 );
     
 

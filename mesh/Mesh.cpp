@@ -6,13 +6,46 @@
 Mesh::Mesh(const char* path, Vec3Df pos, int scale) : pos(pos), scale(scale){
     vertices.clear();
     triangles.clear();  
-    loadOBJ(path, vertices, triangles);
+    normals.clear();
+    loadOBJ(path, vertices, triangles, normals);
     Kd.resize(vertices.size(), Vec3Df(0.5,0.5,0.5));
 	Ks.resize(vertices.size(), Vec3Df(0.2,0.2,0.2));
 	Shininess.resize(vertices.size(), 3);
     lighting.resize(vertices.size());
     computeVertexNormals();
     centerAndScaleToUnit();
+}
+
+Vec3Df & Mesh::normalAt(const int t, const int i) {
+    Triangle & triangle = triangles[t];
+    int n = 0;
+    switch(i) {
+        case 0:
+            n = triangle.n0;
+            break;
+        case 1:
+            n = triangle.n1;
+            break;
+        case 2:
+            n = triangle.n2;
+            break;
+    }
+    if (n == 0){
+        switch(i){
+            case 0:
+                return vertices[triangle.v0].n;
+            case 1:
+                return vertices[triangle.v1].n;
+            case 2:
+                return vertices[triangle.v2].n;
+        }
+    }else{
+        return normals[n];
+    }
+    // int n = triangle.n[i];
+    // return n == 0 ? vertices[triangle.v[i]].n : normals[n];
+
+
 }
 
 void Mesh::draw(){

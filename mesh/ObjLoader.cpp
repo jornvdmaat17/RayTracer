@@ -2,7 +2,7 @@
 #include <cstring>
 #include "../math/Vertex.h"
 
-bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<Triangle> & out_triangles){
+bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<Triangle> & out_triangles, std::vector<Vec3Df> & normals){
 
     std::vector<unsigned int> vertexIndices, normalIndices;
     std::vector<Vec3Df> temp_vertices, temp_normals;
@@ -28,6 +28,7 @@ bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<T
             Vec3Df normal;
             fscanf(file, "%f %f %f\n", &normal.p[0], &normal.p[1], &normal.p[2]);
             temp_normals.push_back(normal);
+            normals.push_back(normal);
         }else if(strcmp(lineHeader, "f") == 0){
             unsigned int vertexIndex[3], normalIndex[3], uvIndex[3];
             int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", 
@@ -45,16 +46,16 @@ bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<T
             normalIndices.push_back(normalIndex[1]);
             normalIndices.push_back(normalIndex[2]);
         }
-
     }
     
     for(unsigned int i = 0; i < temp_vertices.size(); i++){ 
         Vertex v = Vertex(temp_vertices[i], temp_normals[normalIndices[i] - 1]);
+        // Vertex v = Vertex(temp_vertices[i], nullptr);
         out_vertices.push_back(v);
     }
 
     for(unsigned int i = 0; i < vertexIndices.size(); i += 3){
-        Triangle t = Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1);
+        Triangle t = Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1, normalIndices[i] - 1, normalIndices[i + 1] - 1, normalIndices[i + 2] - 1);
         out_triangles.push_back(t);
     }
     

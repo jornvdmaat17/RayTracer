@@ -56,8 +56,6 @@ template <class T> bool operator>= (const Vec3D<T> & a, const Vec3D<T> & b) {
 }
 
 
-
-
 /**
  * Vector in 3 dimensions, with basics operators overloaded.
  */
@@ -181,6 +179,10 @@ public:
     static inline T distance (const Vec3D &v1, const Vec3D &v2) {
         Vec3D tmp = v1 - v2;
         return (tmp.getLength());
+    }
+
+    inline const std::string toString(){
+        return "Vec3(" + std::to_string(p[0]) + std::string(", ") + std::to_string(p[1]) + std::string(", ") + std::to_string(p[2]) + std::string(")");
     }
 
     T p[3];

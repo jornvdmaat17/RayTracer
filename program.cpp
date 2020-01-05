@@ -8,10 +8,11 @@
 #include "render/RayTracer.h"
 #include "input/SceneBuilder.h"
 
-#define WIDTH 800
-#define HEIGHT 800
+#define WIDTH 400
+#define HEIGHT 400
 
 Renderer renderer;
+DebugDraw debugDraw;
 
 const float BackgroundColor[]={0.2,0.2,0};
 void display();
@@ -71,6 +72,7 @@ int main(int argc, char** argv){
 void init(){
 
     renderer = Renderer();
+    debugDraw = DebugDraw();
     
     std::vector<Mesh> meshes = getMeshInformation("data/scene.txt");
     for(int i = 0; i < meshes.size(); i++){
@@ -91,6 +93,7 @@ void display(void){
     tbVisuTransform(); // Set transform according to camera position (as set by mouse movement)
 
     renderer.render();   
+    debugDraw.drawAll();
 
     glutSwapBuffers();
 }
@@ -132,10 +135,11 @@ void keyboard(unsigned char key, int x, int y){
             return;
         }
         case 's': {
+            debugDraw.clear();
             Image result(WIDTH, HEIGHT);
             std::vector<Mesh> meshes = renderer.meshes;
             std::vector<Vec3Df> lights = renderer.lights;
-            RayTracer rayTracer = RayTracer(WIDTH, HEIGHT, meshes);
+            RayTracer rayTracer = RayTracer(WIDTH, HEIGHT, meshes, lights, debugDraw);
             rayTracer.startRayTracing();
             rayTracer.writeToImage(result);
             result.writeImage("result.bmp");
