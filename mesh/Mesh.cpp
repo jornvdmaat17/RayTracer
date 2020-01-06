@@ -3,49 +3,15 @@
 #include <cstring>
 #include "ObjLoader.h"
 
-Mesh::Mesh(const char* path, Vec3Df pos, int scale) : pos(pos), scale(scale){
+Mesh::Mesh(const char* objPath, const char* mtlPath, Vec3Df pos, int scale) : pos(pos), scale(scale){
     vertices.clear();
     triangles.clear();  
     normals.clear();
-    loadOBJ(path, vertices, triangles, normals);
-    Kd.resize(vertices.size(), Vec3Df(0.5,0.5,0.5));
-	Ks.resize(vertices.size(), Vec3Df(0.2,0.2,0.2));
-	Shininess.resize(vertices.size(), 3);
+    loadOBJ(objPath, vertices, triangles, normals);
+    material = Material(mtlPath);
     lighting.resize(vertices.size());
     computeVertexNormals();
     centerAndScaleToUnit();
-}
-
-Vec3Df & Mesh::normalAt(const int t, const int i) {
-    Triangle & triangle = triangles[t];
-    int n = 0;
-    switch(i) {
-        case 0:
-            n = triangle.n0;
-            break;
-        case 1:
-            n = triangle.n1;
-            break;
-        case 2:
-            n = triangle.n2;
-            break;
-    }
-    if (n == 0){
-        switch(i){
-            case 0:
-                return vertices[triangle.v0].n;
-            case 1:
-                return vertices[triangle.v1].n;
-            case 2:
-                return vertices[triangle.v2].n;
-        }
-    }else{
-        return normals[n];
-    }
-    // int n = triangle.n[i];
-    // return n == 0 ? vertices[triangle.v[i]].n : normals[n];
-
-
 }
 
 void Mesh::draw(){
@@ -88,9 +54,9 @@ void Mesh::drawWithColors(const std::vector<Vec3Df> & colors){
     glEnd();
 }
 
-Cube::Cube(Vec3Df pos, float scale) : Mesh("data/cube.obj", pos, scale) {}
+Cube::Cube(const char *mtlpath, Vec3Df pos, float scale) : Mesh("data/cube.obj", mtlpath, pos, scale) {}
 
-Sphere::Sphere(Vec3Df pos, float scale) : Mesh("data/sphere.obj", pos, scale){}
+Sphere::Sphere(const char *mtlpath, Vec3Df pos, float scale) : Mesh("data/sphere.obj", mtlpath, pos, scale){}
 
 void Mesh::printVertices(){
     for(unsigned int i = 0; i < vertices.size(); i++){
@@ -167,7 +133,7 @@ Vec3Df Mesh::diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df
 	if (t < 0) {
 		t = 0;
 	}
-	Vec3Df res = (t*Kd[index]);
+	Vec3Df res = (t*material.Kd);
 	return res;
 }
 
@@ -180,9 +146,9 @@ Vec3Df Mesh::phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const 
 	lightP.normalize();
 	Vec3Df reflectDir = 2 * Vec3Df::dotProduct(lightP, normal) * normal - lightP;
 
-	float t = pow(Vec3Df::dotProduct(viewDir, reflectDir), Shininess[index]);
+	float t = pow(Vec3Df::dotProduct(viewDir, reflectDir), material.Sh);
 	if (t < 0) t = 0;
-	Vec3Df res =(t * Ks[index]);
+	Vec3Df res = (t * material.Ks);
 	return res;
 }
 
@@ -196,9 +162,9 @@ Vec3Df Mesh::blinnPhongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, c
 	Vec3Df halfDir = lightDir + viewDir;
 	halfDir.normalize();
 
-	float t = pow(Vec3Df::dotProduct(normal, halfDir), Shininess[index]);
+	float t = pow(Vec3Df::dotProduct(normal, halfDir), material.Sh);
 	if (t < 0) t = 0;
-	Vec3Df res = ( t * Ks[index]);
+	Vec3Df res = ( t * material.Ks);
 	return res;
 }
 

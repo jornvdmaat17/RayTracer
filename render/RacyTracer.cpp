@@ -78,11 +78,11 @@ Vec3Df RayTracer::performRayTracing(const Vec3Df & origin, const Vec3Df & dest){
 	Vec3Df d = dest - origin;
 	d.normalize();
 	// rayTraceRecursive(origin, d, 2, p, color, dist);
-    rayTraceRecursive(origin, d, color, dist, t);
+    rayTraceRecursive(origin, d, color, dist, t, 1);
 	return color;
 }
 
-void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & colorOut, Vec3Df & distOut, float & tMin){ //, float & distOut, int depth, Vec3Df & pOut,){
+void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & colorOut, Vec3Df & distOut, float & tMin, int depth){ //, float & distOut, int depth, Vec3Df & pOut,){
     float nearestT = MAXFLOAT;
     unsigned int tIndex;
     unsigned int mIndex;
@@ -145,19 +145,12 @@ void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & c
     tMin = nearestT;
     Vec3Df tempCollerAddition(0,0,0);
     Vec3Df tempColorOut(0,0,0);
+    Vec3Df ownColor;
     if(nearestT < MAXFLOAT){
-        Mesh * mesh = &meshes[mIndex];
-        
-        
-        /* DEF WORKS
-        auto colors = mesh->lighting;
-        auto triangle = mesh->triangles[tIndex];
-        colorOut = aMin * colors[triangle.v0] + bMin * colors[triangle.v1] + (1.f - aMin - bMin) * colors[triangle.v2];
-        */
+        distOut = pMin;
 
-
-        for(Vec3Df lightPos : lights){
-            Vec3Df lightDir = lightPos - pMin;
+        if(depth > 0){
+            Mesh * mesh = &meshes[mIndex];
 
             Triangle hitTriangle = mesh->triangles[tIndex];
             Vec3Df v0n = mesh->vertices[hitTriangle.v0].n;
@@ -166,17 +159,42 @@ void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & c
 
             Vec3Df n = aMin * v0n + bMin * v1n + (1.f - aMin - bMin ) * v2n;
             n.normalize();
-            calculateLights(lightDir, lightPos, d, n, tempColorOut, *mesh);
-            tempCollerAddition += tempColorOut;
+            
+            for(Vec3Df lightPos : lights){
+                Vec3Df lightDir = lightPos - pMin;            
+                calculateLights(lightDir, lightPos, d, n, tempColorOut);
+                tempCollerAddition += tempColorOut;
+            }
+            ownColor = tempCollerAddition / lights.size();    
+
+            Vec3Df reflectedColor;
+
+            // if(mesh->reflection > 0){
+            //     ensurePosDotProd(d, n);
+
+            //     float raySurfaceDotProduct = Vec3Df::dotProduct(n, d);
+            //     Vec3Df reflection = d - 2.f * n * raySurfaceDotProduct;
+
+            //     Vec3Df reflectionPoint = pMin + reflection * epsilon;
+
+            //     float ignoreDist;
+            //     Vec3Df ignorePos;
+            //     rayTraceRecursive(reflectionPoint, reflection, reflectedColor, ignorePos, ignoreDist, depth - 1);
+
+                // if(reflectedColor == Vec3Df(BackgroundColor[0], BackgroundColor[1], BackgroundColor[2])) reflectedColor = Vec3Df(0.f, 0.f, 0.f);
+            // }
+            // colorOut = (1 - mesh->reflection) * ownColor + mesh->reflection * reflectedColor;
+            // colorOut = 0.8f * reflectedColor;
+
+            colorOut = ownColor;
+
         }
-        colorOut = tempCollerAddition / lights.size();    
-    
     }else{
         colorOut = Vec3Df(BackgroundColor[0], BackgroundColor[1], BackgroundColor[2]);
     }
 }
 
-void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3Df & d, Vec3Df & n, Vec3Df & colorOut, Mesh & mesh){
+void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3Df & d, Vec3Df & n, Vec3Df & colorOut){
     Vec3Df lightDirUnit = lightDir;
 	lightDirUnit.normalize();
 
@@ -184,7 +202,7 @@ void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3
     
     Vec3Df ignored;
     float distOut;
-	rayTraceRecursive(lightPos, lightDirUnit, ignored, ignored, distOut);
+	rayTraceRecursive(lightPos, lightDirUnit, ignored, ignored, distOut, 0);
 
     if (distOut >= expectedDist - epsilon) {
         float intensity = Vec3Df::dotProduct(n, lightDirUnit);
@@ -197,10 +215,6 @@ void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3
         // if (dotProd > 0) {
         //     colorOut += pow(dotProd, 100) * Vec3Df(0.5f, 0.5f, 0.5f);
         // }
-    }
-
-    if(mesh.reflection > 0){
-
     }
 }
 

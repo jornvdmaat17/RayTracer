@@ -13,16 +13,16 @@ std::vector<Mesh> getMeshInformation(const char* f){
         while(getline(file, line)){
             if(line.at(0) != '/'){
                 std::vector<std::string> res = split(line, " ");
-                if(res.size() != 5){
+                if(res.size() != 6){
                     std::cout << "File format incorrect" << std::endl;
                     break;
                 }
                 if(res[0] == "cube"){
-                    meshes.push_back(Cube(Vec3Df(std::stof(res[1]), std::stof(res[2]), std::stof(res[3])), std::stof(res[4])));
+                    meshes.push_back(Cube(("data/" + res[5] + ".mtl").c_str(), Vec3Df(std::stof(res[1]), std::stof(res[2]), std::stof(res[3])), std::stof(res[4])));
                     continue;
                 }
                 if(res[0] == "sphere"){
-                    meshes.push_back(Sphere(Vec3Df(std::stof(res[1]), std::stof(res[2]), std::stof(res[3])), std::stof(res[4])));
+                    meshes.push_back(Sphere(("data/" + res[5] + ".mtl").c_str(), Vec3Df(std::stof(res[1]), std::stof(res[2]), std::stof(res[3])), std::stof(res[4])));
                     continue;
                 }
             }

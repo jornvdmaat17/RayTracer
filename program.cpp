@@ -8,8 +8,8 @@
 #include "render/RayTracer.h"
 #include "input/SceneBuilder.h"
 
-#define WIDTH 1000
-#define HEIGHT 1000
+#define WIDTH 800
+#define HEIGHT 800
 
 Renderer renderer;
 DebugDraw debugDraw;

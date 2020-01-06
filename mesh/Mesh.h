@@ -3,18 +3,17 @@
 
 #include "../math/Triangle.h"
 #include "../math/Vertex.h"
+#include "Material.h"
 #include <vector>
 
 class Mesh {
 
     public:
-        Mesh(const char* path, Vec3Df pos, int scale);
+        Mesh(const char* objPath, const char* mtlPath, Vec3Df pos, int scale);
         Vec3Df pos;
         float scale;
 
-        std::vector<Vec3Df> Kd;
-        std::vector<Vec3Df> Ks;
-        std::vector<float> Shininess;
+        Material material;
         std::vector<Vec3Df> lighting;
 
         std::vector<Vertex> vertices;
@@ -50,12 +49,12 @@ class Mesh {
 
 class Cube : public Mesh {
     public:
-        Cube(Vec3Df pos, float scale);
+        Cube(const char * mtlpath, Vec3Df pos, float scale);
 };
 
 class Sphere : public Mesh {
     public:
-        Sphere(Vec3Df pos, float scale);
+        Sphere(const char * mtlpath, Vec3Df pos, float scale);
 };
 
 

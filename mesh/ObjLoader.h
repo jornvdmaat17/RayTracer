@@ -12,6 +12,5 @@ bool loadOBJ(
     std::vector<Triangle> & out_triangles,
     std::vector<Vec3Df> & normals
 );
-    
 
 #endif
