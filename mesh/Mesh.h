@@ -22,8 +22,9 @@ class Mesh {
         std::vector<Vec3Df> normals;
 
         bool DiffuseLighting = true;
-        bool PhongSpecularLighting = false;
-        bool BlinnPhongSpecularLighting = true;
+        bool PhongSpecularLighting = true;
+        bool BlinnPhongSpecularLighting = false;
+        float reflection = 0.5;
 
         void drawWithLight();
         void drawWithColors(const std::vector<Vec3Df> & colors);

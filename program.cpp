@@ -8,13 +8,13 @@
 #include "render/RayTracer.h"
 #include "input/SceneBuilder.h"
 
-#define WIDTH 400
-#define HEIGHT 400
+#define WIDTH 1000
+#define HEIGHT 1000
 
 Renderer renderer;
 DebugDraw debugDraw;
 
-const float BackgroundColor[]={0.2,0.2,0};
+const float BackgroundColor[]={0.5,0.5,0.5};
 void display();
 void init();
 void reshape(int w, int h);
