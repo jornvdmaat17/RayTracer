@@ -25,6 +25,8 @@ Material::Material(const char *path){
             fscanf(file, "%f %f %f\n", &Ks.p[0], &Ks.p[1], &Ks.p[2]);
         }else if(strcmp(lineHeader, "Sh") == 0){
             fscanf(file, "%f\n", &Sh);
+        }else if(strcmp(lineHeader, "Rs") == 0){
+            fscanf(file, "%f\n", &Rs);
         }
     }
 }

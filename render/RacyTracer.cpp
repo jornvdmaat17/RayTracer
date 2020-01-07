@@ -6,7 +6,13 @@
 #include <fstream>
 
 float epsilon = 0.000000000000001f;
-const float BackgroundColor[]={0.2,0.2,0};
+const float BackgroundColor[]={0.2,0.3,0};
+
+
+float map(float x, float in_min, float in_max, float out_min, float out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 
 RayTracer::RayTracer(int screen_width, int screen_height, std::vector<Mesh> meshes, std::vector<Vec3Df> lights, DebugDraw & debugDraw) : width(screen_width), height(screen_height), debugDraw(debugDraw) {
     this->meshes = meshes;
@@ -77,8 +83,7 @@ Vec3Df RayTracer::performRayTracing(const Vec3Df & origin, const Vec3Df & dest){
     float t;
 	Vec3Df d = dest - origin;
 	d.normalize();
-	// rayTraceRecursive(origin, d, 2, p, color, dist);
-    rayTraceRecursive(origin, d, color, dist, t, 1);
+    rayTraceRecursive(origin, d, color, dist, t, 2);
 	return color;
 }
 
@@ -87,8 +92,8 @@ void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & c
     unsigned int tIndex;
     unsigned int mIndex;
     float aMin, bMin;
-    Vec3Df pMin(0,0,0); 
-    
+    Vec3Df pMin(0,0,0);     
+
     for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
         std::vector<Vertex> & vertices = meshes[meshIndex].vertices;
         std::vector<Triangle> & triangles = meshes[meshIndex].triangles;
@@ -151,6 +156,7 @@ void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & c
 
         if(depth > 0){
             Mesh * mesh = &meshes[mIndex];
+            Texture t = mesh->texture;
 
             Triangle hitTriangle = mesh->triangles[tIndex];
             Vec3Df v0n = mesh->vertices[hitTriangle.v0].n;
@@ -161,15 +167,32 @@ void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & c
             n.normalize();
             
             for(Vec3Df lightPos : lights){
-                Vec3Df lightDir = lightPos - pMin;            
-                calculateLights(lightDir, lightPos, d, n, tempColorOut);
+                Vec3Df lightDir = lightPos - pMin;   
+                
+                Vec2Df t0 = mesh->textureCoords[hitTriangle.t0];
+                Vec2Df t1 = mesh->textureCoords[hitTriangle.t1];
+                Vec2Df t2 = mesh->textureCoords[hitTriangle.t2];
+
+                Vec2Df pixel = aMin * t0 + bMin * t1 + (1.f - aMin - bMin) * t2;
+                Vec3Df colour = t.getPixelColor(pixel.p[0] * t.width, pixel.p[1] * t.height);
+                
+                tempColorOut = Vec3Df(map(colour.p[0], 0.f, 255.f, 0.f, 1.f), map(colour.p[1], 0.f, 255.f, 0.f, 1.f), map(colour.p[2], 0.f, 255.f, 0.f, 1.f));
+                // calculateLights(lightDir, lightPos, d, n, tempColorOut, mesh);
                 tempCollerAddition += tempColorOut;
             }
-            ownColor = tempCollerAddition / lights.size();    
+            colorOut = tempCollerAddition  / lights.size();
 
-            Vec3Df reflectedColor;
+            // ownColor = tempCollerAddition / lights.size();    
 
-            // if(mesh->reflection > 0){
+            // float reflSc;
+            // if(depth == 1)
+            //     reflSc = 0.f;
+            // else
+            //     reflSc = mesh->material.Rs;
+
+            // Vec3Df reflectedColor;
+
+            // if(reflSc > 0){
             //     ensurePosDotProd(d, n);
 
             //     float raySurfaceDotProduct = Vec3Df::dotProduct(n, d);
@@ -181,20 +204,15 @@ void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & c
             //     Vec3Df ignorePos;
             //     rayTraceRecursive(reflectionPoint, reflection, reflectedColor, ignorePos, ignoreDist, depth - 1);
 
-                // if(reflectedColor == Vec3Df(BackgroundColor[0], BackgroundColor[1], BackgroundColor[2])) reflectedColor = Vec3Df(0.f, 0.f, 0.f);
             // }
-            // colorOut = (1 - mesh->reflection) * ownColor + mesh->reflection * reflectedColor;
-            // colorOut = 0.8f * reflectedColor;
-
-            colorOut = ownColor;
-
+            // colorOut = (1 - reflSc) * ownColor + reflSc * reflectedColor;
         }
     }else{
         colorOut = Vec3Df(BackgroundColor[0], BackgroundColor[1], BackgroundColor[2]);
     }
 }
 
-void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3Df & d, Vec3Df & n, Vec3Df & colorOut){
+void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3Df & d, Vec3Df & n, Vec3Df & colorOut, Mesh * mesh){
     Vec3Df lightDirUnit = lightDir;
 	lightDirUnit.normalize();
 
@@ -208,13 +226,13 @@ void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3
         float intensity = Vec3Df::dotProduct(n, lightDirUnit);
         if(intensity < 0) intensity = 0;
 
-        colorOut += intensity * Vec3Df(0.5f, 0.5f, 0.5f);
+        colorOut += intensity * mesh->material.Kd;
 
-        // Vec3Df reflection = 2.f * n * intensity - lightDirUnit;
-        // float dotProd = Vec3Df::dotProduct(reflection, d);
-        // if (dotProd > 0) {
-        //     colorOut += pow(dotProd, 100) * Vec3Df(0.5f, 0.5f, 0.5f);
-        // }
+        Vec3Df reflection = 2.f * n * intensity - lightDirUnit;
+        float dotProd = pow(Vec3Df::dotProduct(reflection, d), mesh->material.Sh);
+        if (dotProd > 0) {
+            colorOut += dotProd * mesh->material.Ks;
+        }
     }
 }
 

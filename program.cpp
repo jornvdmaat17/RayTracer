@@ -8,13 +8,13 @@
 #include "render/RayTracer.h"
 #include "input/SceneBuilder.h"
 
-#define WIDTH 800
-#define HEIGHT 800
+int width = 200;
+int height = 200;
 
 Renderer renderer;
 DebugDraw debugDraw;
 
-const float BackgroundColor[]={0.5,0.5,0.5};
+const float BackgroundColor[]={0.2,0.3,0};
 void display();
 void init();
 void reshape(int w, int h);
@@ -26,6 +26,11 @@ int main(int argc, char** argv){
 
     glutInit(&argc, argv);
 
+    if(argc == 4){
+       width =  atoi(argv[2]);
+       height = atoi(argv[3]); 
+    }
+
     init();
 
     // Framebuffer options/layers used by the application
@@ -33,7 +38,7 @@ int main(int argc, char** argv){
 
     // Position and size of the window
     glutInitWindowPosition(200, 100);
-    glutInitWindowSize(WIDTH,HEIGHT);
+    glutInitWindowSize(width,height);
     glutCreateWindow(argv[1]);	
 
     // Transform matrix initialization
@@ -78,6 +83,7 @@ void init(){
     for(int i = 0; i < meshes.size(); i++){
         renderer.addMesh(meshes[i]);
     }
+
 
     renderer.addString(ASCIIString(-1.4, 1.4, 1, 1, 1, "Raytracing Program"));
 
@@ -134,18 +140,16 @@ void keyboard(unsigned char key, int x, int y){
             changeZoom(-0.5f);
             return;
         }
-        case 's': {
+        case 's': 
+        case 'S': {
             debugDraw.clear();
-            Image result(WIDTH, HEIGHT);
+            Image result(width, height);
             std::vector<Mesh> meshes = renderer.meshes;
             std::vector<Vec3Df> lights = renderer.lights;
-            RayTracer rayTracer = RayTracer(WIDTH, HEIGHT, meshes, lights, debugDraw);
+            RayTracer rayTracer = RayTracer(width, height, meshes, lights, debugDraw);
             rayTracer.startRayTracing();
             rayTracer.writeToImage(result);
             result.writeImage("result.bmp");
-
-
-
             return;
         }
     }

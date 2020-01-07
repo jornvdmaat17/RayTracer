@@ -9,6 +9,7 @@ class Material {
     public:
         float Ns;
         float Sh;
+        float Rs;
         Vec3Df Ka;
         Vec3Df Kd;
         Vec3Df Ks;

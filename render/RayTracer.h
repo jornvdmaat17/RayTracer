@@ -27,7 +27,7 @@ class RayTracer {
         std::vector<Vec3Df> renderRow(unsigned int y);
         Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest);
         void rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & colorOut, Vec3Df & distOut, float & tMin, int depth);
-        void calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3Df & d, Vec3Df & n, Vec3Df & colorOut);
+        void calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3Df & d, Vec3Df & n, Vec3Df & colorOut, Mesh * mesh);
         void ensurePosDotProd(const Vec3Df & constVec, Vec3Df & varVec);
 };
 

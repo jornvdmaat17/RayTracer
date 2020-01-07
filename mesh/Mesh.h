@@ -4,26 +4,29 @@
 #include "../math/Triangle.h"
 #include "../math/Vertex.h"
 #include "Material.h"
+#include "Texture.h"
 #include <vector>
+#include "../math/Vec2D.h"
 
 class Mesh {
 
     public:
-        Mesh(const char* objPath, const char* mtlPath, Vec3Df pos, int scale);
+        Mesh(const char* objPath, const char* mtlPath, const char* texturePath, Vec3Df pos, int scale);
         Vec3Df pos;
         float scale;
 
         Material material;
+        Texture texture;
         std::vector<Vec3Df> lighting;
 
         std::vector<Vertex> vertices;
         std::vector<Triangle> triangles;
         std::vector<Vec3Df> normals;
+        std::vector<Vec2Df> textureCoords;
 
         bool DiffuseLighting = true;
         bool PhongSpecularLighting = true;
         bool BlinnPhongSpecularLighting = false;
-        float reflection = 0.5;
 
         void drawWithLight();
         void drawWithColors(const std::vector<Vec3Df> & colors);
@@ -49,12 +52,12 @@ class Mesh {
 
 class Cube : public Mesh {
     public:
-        Cube(const char * mtlpath, Vec3Df pos, float scale);
+        Cube(const char * mtlpath, const char* texturePath, Vec3Df pos, float scale);
 };
 
 class Sphere : public Mesh {
     public:
-        Sphere(const char * mtlpath, Vec3Df pos, float scale);
+        Sphere(const char * mtlpath, const char* texturePath, Vec3Df pos, float scale);
 };
 
 

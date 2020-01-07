@@ -2,10 +2,11 @@
 #include <cstring>
 #include "../math/Vertex.h"
 
-bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<Triangle> & out_triangles, std::vector<Vec3Df> & normals){
+bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<Triangle> & out_triangles, std::vector<Vec3Df> & normals, std::vector<Vec2Df> & textureCoords){
 
-    std::vector<unsigned int> vertexIndices, normalIndices;
-    std::vector<Vec3Df> temp_vertices, temp_normals;
+    std::vector<unsigned int> vertexIndices, normalIndices, textureIndices;
+    std::vector<Vec3Df> temp_vertices, temp_normals; 
+    std::vector<Vec2Df> temp_textures;
 
     FILE *file = fopen(path, "r");
     if(file == NULL){
@@ -29,6 +30,11 @@ bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<T
             fscanf(file, "%f %f %f\n", &normal.p[0], &normal.p[1], &normal.p[2]);
             temp_normals.push_back(normal);
             normals.push_back(normal);
+        }else if(strcmp(lineHeader, "vt") == 0){
+            Vec2Df texture;
+            fscanf(file,"%f %f\n", &texture.p[0], &texture.p[1]);
+            temp_textures.push_back(texture);
+            textureCoords.push_back(texture);
         }else if(strcmp(lineHeader, "f") == 0){
             unsigned int vertexIndex[3], normalIndex[3], uvIndex[3];
             int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", 
@@ -42,6 +48,9 @@ bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<T
             vertexIndices.push_back(vertexIndex[0]);
             vertexIndices.push_back(vertexIndex[1]);
             vertexIndices.push_back(vertexIndex[2]);
+            textureIndices.push_back(uvIndex[0]);
+            textureIndices.push_back(uvIndex[1]);
+            textureIndices.push_back(uvIndex[2]);
             normalIndices.push_back(normalIndex[0]);
             normalIndices.push_back(normalIndex[1]);
             normalIndices.push_back(normalIndex[2]);
@@ -50,12 +59,13 @@ bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<T
     
     for(unsigned int i = 0; i < temp_vertices.size(); i++){ 
         Vertex v = Vertex(temp_vertices[i], temp_normals[normalIndices[i] - 1]);
-        // Vertex v = Vertex(temp_vertices[i], nullptr);
         out_vertices.push_back(v);
     }
 
     for(unsigned int i = 0; i < vertexIndices.size(); i += 3){
-        Triangle t = Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1, normalIndices[i] - 1, normalIndices[i + 1] - 1, normalIndices[i + 2] - 1);
+        Triangle t = Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1, 
+                              normalIndices[i] - 1, normalIndices[i + 1] - 1, normalIndices[i + 2] - 1, 
+                              textureIndices[i] - 1, textureIndices[i + 1] - 1, textureIndices[i + 2] - 1);
         out_triangles.push_back(t);
     }
     

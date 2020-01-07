@@ -3,12 +3,14 @@
 #include <cstring>
 #include "ObjLoader.h"
 
-Mesh::Mesh(const char* objPath, const char* mtlPath, Vec3Df pos, int scale) : pos(pos), scale(scale){
+Mesh::Mesh(const char* objPath, const char* mtlPath, const char* texturePath, Vec3Df pos, int scale) : pos(pos), scale(scale){
     vertices.clear();
     triangles.clear();  
     normals.clear();
-    loadOBJ(objPath, vertices, triangles, normals);
+    textureCoords.clear();
+    loadOBJ(objPath, vertices, triangles, normals, textureCoords);
     material = Material(mtlPath);
+    texture = Texture(texturePath);
     lighting.resize(vertices.size());
     computeVertexNormals();
     centerAndScaleToUnit();
@@ -54,9 +56,9 @@ void Mesh::drawWithColors(const std::vector<Vec3Df> & colors){
     glEnd();
 }
 
-Cube::Cube(const char *mtlpath, Vec3Df pos, float scale) : Mesh("data/cube.obj", mtlpath, pos, scale) {}
+Cube::Cube(const char *mtlpath, const char* texturePath, Vec3Df pos, float scale) : Mesh("data/cube.obj", mtlpath, texturePath, pos, scale) {}
 
-Sphere::Sphere(const char *mtlpath, Vec3Df pos, float scale) : Mesh("data/sphere.obj", mtlpath, pos, scale){}
+Sphere::Sphere(const char *mtlpath, const char* texturePath, Vec3Df pos, float scale) : Mesh("data/sphere.obj", mtlpath, texturePath, pos, scale){}
 
 void Mesh::printVertices(){
     for(unsigned int i = 0; i < vertices.size(); i++){
@@ -139,7 +141,7 @@ Vec3Df Mesh::diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df
 
 Vec3Df Mesh::phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index)
 {
-	Vec3Df viewDir = cameraPos- vertexPos;
+	Vec3Df viewDir = cameraPos - vertexPos;
 	viewDir.normalize();
 	normal.normalize();
 	Vec3Df lightP = lightPos;

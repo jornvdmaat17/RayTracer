@@ -7,9 +7,8 @@
 class Triangle {
     
     public:
-        Triangle();
-        Triangle(const Triangle &t);
-        Triangle(int v0, int v1, int v2, int n0, int n1, int n2);
+        Triangle(){};
+        Triangle(int v0, int v1, int v2, int n0, int n1, int n2, int t0, int t1, int t2);
         const std::string toString();
         int v0;
         int v1;
@@ -18,6 +17,10 @@ class Triangle {
         int n0;
         int n1;
         int n2;
+
+        int t0;
+        int t1;
+        int t2;
 
         void setEdges(Vec3Df edge0, Vec3Df edge1);
         Vec3Df edge0;
