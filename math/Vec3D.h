@@ -1,9 +1,12 @@
-//A simple general vector class that teaches you the most important cool advanced features of C++
-//ATTENTION it uses templates and operators
-//This might be disturbing at first, but just think of T as either float or double
-//both would be possible and you need no code changes.
-//Here, we only use Vec3Df which is defined at the bottom as Vec3D<float>!
+/*
 
+Header file for 3d vectors which are used for normals and vector coordinates.
+The neccesairy operators are implemented and speak for themselfs.
+
+*/
+
+
+// Stop redefintion
 #pragma once
 
 #include <cmath>
@@ -56,9 +59,7 @@ template <class T> bool operator>= (const Vec3D<T> & a, const Vec3D<T> & b) {
 }
 
 
-/**
- * Vector in 3 dimensions, with basics operators overloaded.
- */
+/*Vec3 class with all operators*/
 template <typename T>
 class Vec3D {
 public:
@@ -78,9 +79,7 @@ public:
         p[1] = pp[1];
         p[2] = pp[2];
     };
-    // ---------
     // Operators
-    // ---------
     inline T& operator[] (int Index) {
         return (p[Index]);
     };

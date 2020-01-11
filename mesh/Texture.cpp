@@ -1,6 +1,9 @@
-
 #include "Texture.h"
 
+/*
+Constructor of a Texture.
+Takes in a file and reads all the data from the bmp file
+*/
 Texture::Texture(const char *file){
     int i;
     FILE* f = fopen(file, "rb");
@@ -25,6 +28,9 @@ Texture::Texture(const char *file){
     this->data = data;
 }
 
+/*
+Returns the rgb color value of a given pixel in the bmp file
+*/
 Vec3Df Texture::getPixelColor(int i, int j){
     return Vec3Df((int)(data[3 * (i * width + j)]), (int)(data[3 * (i * width + j) + 1]), (int)(data[3 * (i * width + j) + 2]));
 }

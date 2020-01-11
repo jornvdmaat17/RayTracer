@@ -2,6 +2,13 @@
 #include <cstring>
 #include "../math/Vertex.h"
 
+/*
+This function takes in a .obj path and stores its contents in out_vertices, out_triangles, normals, textureCoords
+
+If the file is not availabe it wil return false
+The out_triangles will hold all the indices for the vertices, normals and textureCoords
+
+*/
 bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<Triangle> & out_triangles, std::vector<Vec3Df> & normals, std::vector<Vec2Df> & textureCoords){
 
     std::vector<unsigned int> vertexIndices, normalIndices, textureIndices;
@@ -62,6 +69,7 @@ bool loadOBJ(const char *path, std::vector<Vertex> & out_vertices, std::vector<T
         out_vertices.push_back(v);
     }
 
+    /*Correctly setup the triangles with the right indices*/
     for(unsigned int i = 0; i < vertexIndices.size(); i += 3){
         Triangle t = Triangle(vertexIndices[i] - 1, vertexIndices[i + 1] - 1, vertexIndices[i + 2] - 1, 
                               normalIndices[i] - 1, normalIndices[i + 1] - 1, normalIndices[i + 2] - 1, 

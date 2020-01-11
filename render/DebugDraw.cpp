@@ -2,21 +2,26 @@
 #include "DebugDraw.h"
 #include <GL/freeglut.h>
 
+/*Constructor*/
 DebugDraw::DebugDraw(){}
     
+/*Adds a Line to draw*/
 void DebugDraw::addLine(Line l){
     lines.push_back(l);
 }
 
+/*Adds a Point to draw*/
 void DebugDraw::addPoint(Point p){
     points.push_back(p);
 }
 
+/*Empties both lines and points list*/
 void DebugDraw::clear(){
     lines.clear();
     points.clear();
 }
 
+/*Draw all the lines and points to the scene with their colors*/
 void DebugDraw::drawAll(){
     for(Line l : lines){
         glBegin(GL_LINES);

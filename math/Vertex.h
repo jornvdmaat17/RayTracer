@@ -1,3 +1,9 @@
+/*
+
+Header file for a Vertex class with vector coordinates and normal directions
+
+*/
+
 #ifndef _vertex_h
 #define _vertex_h_
 

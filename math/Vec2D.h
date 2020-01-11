@@ -1,3 +1,10 @@
+/*
+Header file for 2d vectors which are used for texture coordinates.
+The neccesairy operators are implemented and speak for themselfs.
+
+*/
+
+// Stop redefintion
 #pragma once
 
 template <typename T> class Vec2D;
@@ -14,6 +21,9 @@ template <class T> Vec2D<T> operator* (float factor, const Vec2D<T> & p) {
     return Vec2D<T> (p[0] * factor, p[1] * factor);
 }
 
+/*
+Vec2 class which holds 2 of the generic type
+*/
 template<typename T>
 class Vec2D {
 public:
@@ -28,9 +38,7 @@ public:
         p[0] = pp[0];
         p[1] = pp[1];
     };
-    // ---------
     // Operators
-    // ---------
     inline T& operator[] (int Index) {
         return (p[Index]);
     };

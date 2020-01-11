@@ -1,3 +1,7 @@
+/*
+Header file for the SceneBuilder that is used to add Objects to the scene
+*/
+
 #ifndef _scene_builder_h_
 #define _scene_builder_h_
 

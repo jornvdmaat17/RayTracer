@@ -1,3 +1,7 @@
+/*
+Header file that holds the RayTracer and its calculations
+*/
+
 #ifndef _ray_tracer_h_
 #define _ray_tracer_h_
 

@@ -1,3 +1,7 @@
+/*
+Header file for the loadObj function that is used to load the Mesh with all its neccesairy params
+*/
+
 #ifndef _obj_loader_h_
 #define _obj_loader_h_
 

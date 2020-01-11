@@ -1,6 +1,18 @@
 #include "Material.h"
 #include <string.h>
 
+/*
+Constructor which takes in a filePath to a given .mtl file
+In this file these values should be specified:
+float Ns
+Vec3 Ka
+Vec3 Kd
+Vec3 Ks
+float Sh
+float Rs
+
+If the file cannot be found, the function returns
+*/
 Material::Material(const char *path){
     FILE *file = fopen(path, "r");
     if(file == NULL){

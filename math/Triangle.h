@@ -1,3 +1,9 @@
+/*
+Header file that holds the Triangle class and its functions
+
+The triangle holds indices for vectors, normals and textures.
+*/
+
 #ifndef _triangle_h_
 #define _triangle_h_
 
@@ -25,7 +31,6 @@ class Triangle {
         void setEdges(Vec3Df edge0, Vec3Df edge1);
         Vec3Df edge0;
         Vec3Df edge1;
-        ~Triangle();
 };
 
 #endif 

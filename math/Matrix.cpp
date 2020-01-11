@@ -1,10 +1,10 @@
 
 #include "Matrix.h"
 
-/// Identity matrix
+// Identity matrix
 const GLdouble identity[] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
 
-/// Projection q=Mp
+// Projection q=Mp for all GL variables
 void project( const GLdouble* m, const GLdouble* p, GLdouble* q){
 	for( int i=0; i<3; ++i ){
 		q[i] = 0;
@@ -13,7 +13,6 @@ void project( const GLdouble* m, const GLdouble* p, GLdouble* q){
 	}
 	q[3] = p[3];
 }
-
 void project( const GLdouble* m, const GLfloat* p, GLfloat* q){
 	for( int i=0; i<3; ++i ){
 		q[i] = 0;
@@ -22,7 +21,6 @@ void project( const GLdouble* m, const GLfloat* p, GLfloat* q){
 	}
 	q[3] = p[3];
 }
-
 void project( const GLdouble* m, const GLdouble* p, GLfloat* q){
 	for( int i=0; i<3; ++i ){
 		q[i] = 0;
@@ -33,7 +31,7 @@ void project( const GLdouble* m, const GLdouble* p, GLfloat* q){
 }
 
 
-/// Inversion
+// Inversion function for matrix
 void inverse( const double *m, double *p )
 {
 	{   // Transposing the rotation

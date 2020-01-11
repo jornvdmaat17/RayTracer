@@ -22,10 +22,13 @@ void idle();
 
 void keyboard(unsigned char key, int x, int y);
 
+/*Launches the program*/
 int main(int argc, char** argv){
 
+    // Init glut
     glutInit(&argc, argv);
 
+    // Set custom witdth and height
     if(argc == 4){
        width =  atoi(argv[2]);
        height = atoi(argv[3]); 
@@ -149,7 +152,7 @@ void keyboard(unsigned char key, int x, int y){
             RayTracer rayTracer = RayTracer(width, height, meshes, lights, debugDraw);
             rayTracer.startRayTracing();
             rayTracer.writeToImage(result);
-            result.writeImage("result.bmp");
+            result.writeImage("result.ppm");
             return;
         }
     }

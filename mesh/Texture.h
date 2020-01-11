@@ -1,3 +1,7 @@
+/*
+Header file that holds the Texture class
+The texture class also finds the coler in the give .bmp file 
+*/
 #ifndef _texture_h_
 #define _texture_h_
 

@@ -3,9 +3,7 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <iostream>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include <fstream>
 
 RGB::RGB(float r, float g, float b){
     this->r = std::min(r, 1.0f);
@@ -24,10 +22,13 @@ void Image::setPixel(int i, int j, RGB rgb){
 }
 
 bool Image::writeImage(const char * fileName){
-    std::vector<unsigned char> wImage(image.size());
-    for(unsigned int i = 0; i < image.size(); ++i){
-        wImage[i] = (unsigned char)(image[i] * 255.0f);
-    }
-
-    return stbi_write_bmp(fileName, width, height, 3, &wImage[0]);
+    std::ofstream f;
+    f.open(fileName, std::ios::out | std::ios::binary);  
+    f << "P6\n" << width << "\n" << height << "\n255\n";
+    for(int i = 0; i < 3 * width * height; i++){
+        unsigned int c = (unsigned int)(image[i] * 255.f + 0.5f);
+        std::cout << c << std::endl;
+        f << c << "\n";
+    } 
+    f.close();
 }

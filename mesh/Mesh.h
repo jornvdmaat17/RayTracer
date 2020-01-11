@@ -1,3 +1,14 @@
+/*
+
+Header file that holds the Mesh class and its members: Cube, Sphere and Plane
+
+Mesh consists of vertices, normals, texturecoords and triangles with indices to combine those
+The function in Mesh are used for the customizable Scene which is started when the program launches
+Different lighting and shading can be chosen.
+Functions implemtation can be found in Mesh.cpp
+
+*/
+
 #ifndef _mesh_h_
 #define _mesh_h_
 
@@ -11,7 +22,7 @@
 class Mesh {
 
     public:
-        Mesh(const char* objPath, const char* mtlPath, const char* texturePath, Vec3Df pos, int scale);
+        Mesh(const char* objPath, const char* mtlPath, const char* texturePath, Vec3Df pos, float scale);
         Vec3Df pos;
         float scale;
 
@@ -43,10 +54,10 @@ class Mesh {
     private:
         void computeVertexNormals();
         void centerAndScaleToUnit();
-        Vec3Df computeLightingPerVector(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, unsigned int index, std::vector<Vec3Df> & LightPos, Vec3Df & CamPos);
-        Vec3Df diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, unsigned int index);
-        Vec3Df phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index);
-        Vec3Df blinnPhongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos, unsigned int index);
+        Vec3Df computeLightingPerVector(Vec3Df & vertexPos, Vec3Df & normal, unsigned int light, std::vector<Vec3Df> & LightPos, Vec3Df & CamPos);
+        Vec3Df diffuseOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos);
+        Vec3Df phongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos);
+        Vec3Df blinnPhongSpecularOnly(const Vec3Df & vertexPos, Vec3Df & normal, const Vec3Df & lightPos, const Vec3Df & cameraPos);
 
 };
 
@@ -60,8 +71,10 @@ class Sphere : public Mesh {
         Sphere(const char * mtlpath, const char* texturePath, Vec3Df pos, float scale);
 };
 
-
-// Add more objects
+class Plane : public Mesh {
+    public:
+        Plane(const char * mtlPath, const char* texturePath, Vec3Df pos, float scale);
+};
 
 
 

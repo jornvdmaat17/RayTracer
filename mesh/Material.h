@@ -1,3 +1,9 @@
+/*
+
+Material header file which holds all the different variables for diffuse, shading and reflection.
+
+*/
+
 #ifndef _material_h_
 #define _material_h_
 

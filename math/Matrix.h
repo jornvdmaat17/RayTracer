@@ -1,3 +1,6 @@
+/*
+Header for the matrix functions which are used by the Mouse
+*/
 #ifndef _matrix_h_
 #define _matrix_h_
 

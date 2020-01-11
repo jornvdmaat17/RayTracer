@@ -1,3 +1,7 @@
+/*
+Header file which holds the ASCIIString which can be rendered to the scene
+*/
+
 #ifndef _ascii_h_
 #define _ascii_h_
 

@@ -4,12 +4,10 @@
 #include "../math/Matrix.h"
 #include "stdio.h"
 
+/* Speed factor of movements */
 static const float speedfact = 0.2;
 
-/** your display function */
-void display();
-
-/** Camera transform matrices */
+/* Camera transform matrices */
 GLdouble tb_matrix[16] =   { 1,0,0,0,
                              0,1,0,0,
                              0,0,1,0,
@@ -19,29 +17,22 @@ GLdouble tb_inverse[16] =  { 1,0,0,0,
                              0,0,1,0,
                              0,0,0,1  };
 
-/** Mouse management variables */
-int tb_ancienX, tb_ancienY, tb_tournerXY=0, tb_translaterXY=0, tb_bougerZ=0;
+/* Mouse management variables */
+int tb_ancienX, tb_ancienY, tb_tournerXY = 0, tb_translaterXY = 0, tb_bougerZ = 0;
 
 
-/** Initialize modelview matrix from initial camera matrix */
+/* Initialize modelview matrix from initial camera matrix */
 void tbInitTransform(){
     glGetDoublev( GL_MODELVIEW_MATRIX, tb_matrix );
     inverse( tb_matrix, tb_inverse );
 }
 
-/** Apply view transform */
+/* Apply view transform */
 void tbVisuTransform(){
     glMultMatrixd( tb_matrix );
 };
 
-/** Display help */
-void tbHelp(){
-    printf("Left button: turn in XY,\n");
-    printf("Right button: translate in XY,\n");
-    printf("Middle button: move along Z.\n");
-}
-
-/** Process mouse button click */
+/* Process mouse button click */
 void tbMouseFunc(int button, int state, int x, int y){
     /* Press left button */
     if( button==GLUT_LEFT_BUTTON && state==GLUT_DOWN )
@@ -81,7 +72,7 @@ void tbMouseFunc(int button, int state, int x, int y){
     }
 }
 
-/** Process mouse motion */
+/* Process mouse motion */
 void tbMotionFunc(int x, int y){
     double dx,dy,nrm, tx,ty,tz;
 
@@ -144,7 +135,7 @@ void tbMotionFunc(int x, int y){
     }
 }
 
-/** Process mouse motion */
+/* Process mouse motion */
 void tbRotate(double angle, double x, double y, double z){
     double tx,ty,tz;
 
@@ -185,6 +176,7 @@ void tbProject( const GLdouble* p, GLfloat* q){
     //cout<<"projRep: "<<q[0]<<", "<<q[1]<<", "<<q[2]<<", "<<q[3]<<endl;
 }
 
+/* Used to getCameraPosition from the user*/
 Vec3Df getCameraPosition(){
 	const GLdouble p[]={0,0,0,1};
 	GLfloat LightP[4];
@@ -196,6 +188,7 @@ Vec3Df getCameraPosition(){
 	return LightPos;
 }
 
+/* Return the position of a pixel in the world */
 Vec3Df getWorldPositionOfPixel(unsigned int px, unsigned int py){
 
 	double mv[16];
@@ -210,6 +203,7 @@ Vec3Df getWorldPositionOfPixel(unsigned int px, unsigned int py){
 	return Vec3Df(x,y,z);
 }
 
+/* Changes the zoom */
 void changeZoom(float amount) {
 	tb_matrix[14] += amount * speedfact;
 	inverse(tb_matrix, tb_inverse);

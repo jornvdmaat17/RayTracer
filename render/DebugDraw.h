@@ -1,3 +1,10 @@
+/*
+Header file for the DebugDraw class which is used to debug the program, here you can draw intersection points of draw lines from normals to intersection points.
+Not used in the main program.
+
+Holds the classes Point and Line too
+*/
+
 #ifndef _debug_draw_h_
 #define _debug_draw_h_
 

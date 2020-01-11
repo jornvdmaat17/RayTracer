@@ -1,3 +1,7 @@
+/*
+Header file that holds the classes Image and RGB
+*/
+
 #ifndef _image_h_
 #define _image_h_
 

@@ -1,3 +1,7 @@
+/*
+Header file with functions for mouse movement in the scene.
+Implementation and details can be found in Mouse.cpp
+*/
 #ifndef _mouse_h_
 #define _mouse_h_
 

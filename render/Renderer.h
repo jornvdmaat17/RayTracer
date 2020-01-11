@@ -1,3 +1,7 @@
+/*
+Header file that holds the class Renderer
+*/
+
 #ifndef _renderer_h_
 #define _renderer_h_
 
