@@ -6,8 +6,8 @@
 #include <fstream>
 
 // Variables
-float epsilon = 0.000000000000001f;
 const float BackgroundColor[]={0.2,0.3,0};
+float epsilon = 0.000000000000001f;
 
 // Map function
 float map(float x, float in_min, float in_max, float out_min, float out_max) {
@@ -223,7 +223,7 @@ void RayTracer::rayTraceRecursive(const Vec3Df & o, const Vec3Df & d, Vec3Df & c
                 Vec3Df reflection = d - 2.f * n * raySurfaceDotProduct;
                 reflection.normalize();
 
-                Vec3Df reflectionPoint = pMin + reflection;
+                Vec3Df reflectionPoint = distOut + reflection * 0.55f;
 
                 float ignoreDist;
                 Vec3Df ignorePos;

@@ -7,9 +7,7 @@
 #include "math/Vec3D.h"
 #include "render/RayTracer.h"
 #include "input/SceneBuilder.h"
-
-int width = 200;
-int height = 200;
+#include "Defines.h"
 
 Renderer renderer;
 DebugDraw debugDraw;
@@ -29,10 +27,10 @@ int main(int argc, char** argv){
     glutInit(&argc, argv);
 
     // Set custom witdth and height
-    if(argc == 4){
-       width =  atoi(argv[2]);
-       height = atoi(argv[3]); 
-    }
+    // if(argc == 4){
+    //    width =  atoi(argv[2]);
+    //    height = atoi(argv[3]); 
+    // }
 
     init();
 
@@ -41,7 +39,7 @@ int main(int argc, char** argv){
 
     // Position and size of the window
     glutInitWindowPosition(200, 100);
-    glutInitWindowSize(width,height);
+    glutInitWindowSize(WIDTH,HEIGHT);
     glutCreateWindow(argv[1]);	
 
     // Transform matrix initialization
@@ -82,7 +80,7 @@ void init(){
     renderer = Renderer();
     debugDraw = DebugDraw();
     
-    std::vector<Mesh> meshes = getMeshInformation("data/scene.txt");
+    std::vector<Mesh> meshes = getMeshInformation("scene.txt");
     for(int i = 0; i < meshes.size(); i++){
         renderer.addMesh(meshes[i]);
     }
@@ -146,13 +144,13 @@ void keyboard(unsigned char key, int x, int y){
         case 's': 
         case 'S': {
             debugDraw.clear();
-            Image result(width, height);
+            Image result;
             std::vector<Mesh> meshes = renderer.meshes;
             std::vector<Vec3Df> lights = renderer.lights;
-            RayTracer rayTracer = RayTracer(width, height, meshes, lights, debugDraw);
+            RayTracer rayTracer = RayTracer(WIDTH, HEIGHT, meshes, lights, debugDraw);
             rayTracer.startRayTracing();
             rayTracer.writeToImage(result);
-            result.writeImage("result.ppm");
+            result.writeImage("result.bmp");
             return;
         }
     }
