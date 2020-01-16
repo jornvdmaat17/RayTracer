@@ -14,7 +14,6 @@ class Renderer {
     private:
         std::vector<Vec3Df> lightsColor;
         unsigned int lightIndex;
-        
 
     public:
         std::vector<Mesh> meshes;

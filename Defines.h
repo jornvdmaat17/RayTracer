@@ -1,6 +1,6 @@
 
-#define WIDTH 800
-#define HEIGHT 800
+#define WIDTH 1080
+#define HEIGHT 1080
 
 // For image rendering
 #define RGBSIZE 3

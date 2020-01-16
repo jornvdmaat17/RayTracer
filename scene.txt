@@ -1,7 +1,4 @@
 / name posX poxY posZ scale mat texture
-/sphere -20 0 0 0.4 cube lgreen.bmp
-/sphere 20 0 0 1 cube lgreen.bmp
-cube 0 0 0 1 cube lgreen.bmp
-/cube 2 0 0 1 reflCube blue.bmp
-/cube 0 0 2 1 reflCube wall.bmp
-plane 0 -1 0 1 reflCube blue.bmp
+cube -4 0 0 0.4 cube lgreen.bmp
+cube 4 0 0 0.4 cube lgreen.bmp
+cube 0 0 0 0.4 reflCube blue.bmp

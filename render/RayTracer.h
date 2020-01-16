@@ -11,6 +11,8 @@ Header file that holds the RayTracer and its calculations
 #include "Image.h"
 #include "DebugDraw.h"
 
+#include <future>
+
 class RayTracer {
 
     public:

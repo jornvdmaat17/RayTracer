@@ -74,10 +74,14 @@ std::vector<Vec3Df> RayTracer::renderRow(unsigned int y) {
 /*Starts the RayTracer by starting initializing all the rows and pushing back the results*/
 void RayTracer::startRayTracing(){
     std::cout << "Started RayTracing" << std::endl;
-    int index = 0;
+    std::vector<std::future<std::vector<Vec3Df>>> li;
     for(unsigned int i = 0; i < height; i++){
-        rows.push_back(renderRow(i));
-        std::cout << 100.f * i / width  << "%\r\n";
+        li.push_back(std::async(std::launch::async, &RayTracer::renderRow, this, i));
+    }
+    
+    for(unsigned int i = 0; i < height; i++){
+        rows.push_back(li[i].get());
+        std::cout << 100.f * i / HEIGHT << "%\r\n";
     }
     std::cout << "Done RayTracking" << std::endl;
 }
@@ -274,10 +278,9 @@ void RayTracer::calculateLights(Vec3Df & lightDir, Vec3Df & lightPos, const Vec3
 /*Write all the rows to image*/
 void RayTracer::writeToImage(Image & result){
     for(unsigned int y = 0; y < height; y++){
-
         for(unsigned int x = 0; x < width; x++){
             Vec3Df row = rows[y][x];
-            RGB rgb = RGB(row[0], row[1], row[2]);
+            RGB rgb = RGB(row.p[0], row.p[1], row.p[2]);
             result.setPixel(x, y, rgb);
         }
     }
